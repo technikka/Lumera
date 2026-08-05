@@ -12,7 +12,10 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(lumera src/main.cpp)
+add_executable(lumera 
+    src/main.cpp
+    src/creature.cpp
+    )
 target_compile_features(lumera PRIVATE cxx_std_17)
 target_link_libraries(lumera PRIVATE SFML::Graphics)
 
