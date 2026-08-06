@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <optional>
 
+#include "PerlinNoise.hpp"
 #include "creature.hpp"
 
 int main() {
@@ -10,11 +11,11 @@ int main() {
     sf::RenderWindow window(sf::VideoMode({800, 800}), "Lumera",
                             sf::Style::Default, sf::State::Windowed, settings);
 
-    auto windowSize = window.getSize();
+    auto window_size = window.getSize();
     // Calculate center to pass in to Creature position
-    Creature creature(5.f, {windowSize.x / 2.f, windowSize.y / 2.f});
+    Creature creature(5.f, {window_size.x / 2.f, window_size.y / 2.f});
 
-    const int max_steps = 9;
+    const int max_steps = 5000;
     int step_count = 0;
 
     while (window.isOpen()) {
@@ -26,7 +27,7 @@ int main() {
         creature.Draw(window);
 
         if (step_count < max_steps) {
-            creature.Move({10.f, 10.f});
+            creature.Move(window_size);
             ++step_count;
         }
 

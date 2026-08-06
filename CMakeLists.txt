@@ -15,7 +15,12 @@ FetchContent_MakeAvailable(SFML)
 add_executable(lumera 
     src/main.cpp
     src/creature.cpp
-    )
+)
+
+target_include_directories(lumera PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/external
+)
+
 target_compile_features(lumera PRIVATE cxx_std_17)
 target_link_libraries(lumera PRIVATE SFML::Graphics)
 
