@@ -3,19 +3,24 @@
 #include <SFML/Graphics.hpp>
 
 #include "PerlinNoise.hpp"
+#include "WorldObject.hpp"
 
-const sf::Color fill_color = sf::Color::Blue;
+sf::Vector2f GetRandomPosition(sf::Vector2u window_size);
+sf::Color GetRandomColor();
 
-class Creature {
+class Creature : public WorldObject {
    public:
-    Creature(float radius, sf::Vector2f position);
+    Creature(float radius, sf::Vector2u window_size,
+             std::optional<sf::Vector2f> position = std::nullopt);
 
-    void Move(sf::Vector2u window_size);
     void Draw(sf::RenderWindow& window) const;
+    void MoveTo(sf::Vector2f position);
+    sf::FloatRect GetBounds() const override;
+    sf::Vector2f GetNextPosition(sf::Vector2u window_size);
 
    private:
     sf::CircleShape body;
-
+    sf::Vector2u window_size;
     std::vector<sf::Vector2f> trail;
     void DrawTrail(sf::RenderWindow& window) const;
 
