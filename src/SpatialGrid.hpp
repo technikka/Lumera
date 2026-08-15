@@ -8,7 +8,7 @@ class SpatialGrid {
    public:
     SpatialGrid(const sf::RenderWindow& window);
     sf::Vector2i GetCellPosition(sf::Vector2f position) const;
-    bool IsOccupied(const WorldObject& occupant, sf::Vector2f position);
+    bool WouldCollide(const WorldObject& occupant, sf::Vector2f position);
 
     struct Cell {
         sf::Vector2i position;
@@ -22,6 +22,8 @@ class SpatialGrid {
     int rows;
     int columns;
     float cell_size;
+
+    static constexpr float avoidance_padding = 4.f;
 
     std::vector<std::vector<Cell>> cells;
 

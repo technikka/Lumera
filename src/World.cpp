@@ -21,30 +21,33 @@ void World::InitializeLumies() {
     }
 }
 
-void World::Update() {
+void World::UpdateLumies() {
     sf::Vector2u window_size = window.getSize();
+    for (auto& lumie : lumies) {
+        sf::Vector2f next_position;
 
-    if (!paused) {
-        for (auto& lumie : lumies) {
-            sf::Vector2f next_position = lumie.GetNextPosition(window_size);
+        do {
+            next_position = lumie.GetNextPosition(window_size);
+        } while (spatial_grid.WouldCollide(lumie, next_position));
 
-            do {
-                next_position = lumie.GetNextPosition(window_size);
-            } while (spatial_grid.IsOccupied(lumie, next_position));
+        sf::Vector2i old_cell =
+            spatial_grid.GetCellPosition(lumie.GetPosition());
 
-            sf::Vector2i old_cell =
-                spatial_grid.GetCellPosition(lumie.GetBounds().position);
+        lumie.MoveTo(next_position);
 
-            lumie.MoveTo(next_position);
+        sf::Vector2i new_cell =
+            spatial_grid.GetCellPosition(lumie.GetPosition());
 
-            sf::Vector2i new_cell =
-                spatial_grid.GetCellPosition(lumie.GetBounds().position);
-
-            if (new_cell != old_cell) {
-                spatial_grid.RemoveOccupant(lumie, old_cell);
-                spatial_grid.AddOccupant(lumie);
-            }
+        if (new_cell != old_cell) {
+            spatial_grid.RemoveOccupant(lumie, old_cell);
+            spatial_grid.AddOccupant(lumie);
         }
+    }
+}
+
+void World::Update() {
+    if (!paused) {
+        UpdateLumies();
     }
 }
 

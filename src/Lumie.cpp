@@ -35,6 +35,11 @@ void Lumie::DefineShape() {
     body.setPoint(14, {4.f, 1.f});
     body.setPoint(15, {4.f, .5f});
 
+    // Set the origin to the center of creature
+    auto bounds = body.getLocalBounds();
+    body.setOrigin({bounds.position.x + bounds.size.x / 2.f,
+                    bounds.position.y + bounds.size.y / 2.f});
+
     body.setFillColor(GetRandomColor());
     body.setScale({2.f, 2.f});
 }
@@ -48,12 +53,9 @@ void Lumie::SetGlow() {
     glow.setFillColor(glow_color);
 }
 
-void Lumie::SetPosition(std::optional<sf::Vector2f> position) {
-    // Set the origin to the center of creature
-    auto bounds = body.getLocalBounds();
-    body.setOrigin({bounds.position.x + bounds.size.x / 2.f,
-                    bounds.position.y + bounds.size.y / 2.f});
+sf::Vector2f Lumie::GetPosition() const { return body.getPosition(); }
 
+void Lumie::SetPosition(std::optional<sf::Vector2f> position) {
     sf::Vector2f start_position =
         position.value_or(GetRandomPosition(window_size));
 
@@ -102,9 +104,17 @@ sf::Vector2f Lumie::GetNextPosition(sf::Vector2u window_size) {
 }
 
 void Lumie::MoveTo(sf::Vector2f position) {
-    trail.push_back(body.getPosition());
-    body.setPosition(position);
-    glow.setPosition(position);
+    sf::Vector2f current_position = body.getPosition();
+    sf::Vector2f new_position = position;
+    sf::Vector2f movement = new_position - current_position;
+    auto angle = movement.angle();
+
+    trail.push_back(current_position);
+
+    body.setRotation(angle + sf::degrees(90.f));
+    glow.setRotation(angle + sf::degrees(90.f));
+    body.setPosition(new_position);
+    glow.setPosition(new_position);
 }
 
 void Lumie::DrawTrail(sf::RenderWindow& window) const {
@@ -136,20 +146,8 @@ sf::Vector2f GetRandomPosition(sf::Vector2u window_size) {
     return {x_dist(gen), y_dist(gen)};
 }
 
-sf::Color GetRandomColor() {
-    sf::Color colors[] = {
-        {210, 255, 60},   // yellow-green
-        {170, 255, 70},   // lime
-        {120, 255, 110},  // green
-        {80, 240, 180},   // aqua-green
-        {70, 210, 255},   // cyan-blue
-    };
-    // static std::uniform_int_distribution<int> color_dist(30, 230);
-
-    // return {static_cast<std::uint8_t>(color_dist(gen)),
-    //         static_cast<std::uint8_t>(color_dist(gen)),
-    //         static_cast<std::uint8_t>(color_dist(gen))};
-    std::uniform_int_distribution<int> dist(0, 4);
+sf::Color Lumie::GetRandomColor() {
+    std::uniform_int_distribution<int> dist(0, colors.size() - 1);
 
     sf::Color color = colors[dist(gen)];
     return color;

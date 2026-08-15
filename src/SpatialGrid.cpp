@@ -28,7 +28,7 @@ sf::Vector2i SpatialGrid::GetCellPosition(sf::Vector2f pixel_position) const {
 }
 
 SpatialGrid::Cell& SpatialGrid::GetCellByOccupant(const WorldObject& occupant) {
-    sf::Vector2i cell_position = GetCellPosition(occupant.GetBounds().position);
+    sf::Vector2i cell_position = GetCellPosition(occupant.GetPosition());
     Cell& cell = cells[cell_position.y][cell_position.x];
     return cell;
 }
@@ -48,15 +48,43 @@ void SpatialGrid::RemoveOccupant(WorldObject& occupant,
     }
 }
 
-bool SpatialGrid::IsOccupied(const WorldObject& occupant,
-                             sf::Vector2f position) {
+// Check proposed position for neighbors that violate avoidance_padding.
+bool SpatialGrid::WouldCollide(const WorldObject& occupant,
+                               sf::Vector2f position) {
+    auto bounds = occupant.GetBounds();
+    float radius = std::max(bounds.size.x, bounds.size.y) / 2.f;
+    float min_distance = (radius * 2.f) + avoidance_padding;
+
+    int cell_distance = static_cast<int>(std::ceil(min_distance / cell_size));
+
     const sf::Vector2i cell_position = GetCellPosition(position);
+
+    // proposed position's cell:
     const Cell& cell = cells[cell_position.y][cell_position.x];
 
-    const int occupant_count = cell.occupants.size();
-    if ((occupant_count == 1) && (cell.occupants[0] != &occupant) ||
-        (occupant_count > 1)) {
-        return true;
+    for (int y = cell_position.y - cell_distance;
+         y <= cell_position.y + cell_distance; ++y) {
+        for (int x = cell_position.x - cell_distance;
+             x <= cell_position.x + cell_distance; ++x) {
+            // Don't access cells outside the grid.
+            if (y < 0 || y >= rows || x < 0 || x >= columns) {
+                continue;
+            }
+
+            const Cell& cell = cells[y][x];
+
+            for (const WorldObject* other : cell.occupants) {
+                // Don't compare the Lumie with itself.
+                if (other == &occupant) {
+                    continue;
+                }
+
+                sf::Vector2f difference = other->GetPosition() - position;
+                if (difference.length() < min_distance) {
+                    return true;
+                }
+            }
+        }
     }
     return false;
 }

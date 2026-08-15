@@ -18,4 +18,5 @@ class World {
     std::vector<Lumie> lumies;
 
     void InitializeLumies();
+    void UpdateLumies();
 };
