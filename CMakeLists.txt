@@ -14,8 +14,9 @@ FetchContent_MakeAvailable(SFML)
 
 add_executable(lumera 
     src/main.cpp
-    src/Creature.cpp
+    src/World.cpp
     src/SpatialGrid.cpp
+    src/Lumie.cpp
 )
 
 target_include_directories(lumera PRIVATE

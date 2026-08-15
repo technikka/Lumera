@@ -8,21 +8,24 @@
 sf::Vector2f GetRandomPosition(sf::Vector2u window_size);
 sf::Color GetRandomColor();
 
-class Creature : public WorldObject {
+class Lumie : public WorldObject {
    public:
-    Creature(float radius, sf::Vector2u window_size,
-             std::optional<sf::Vector2f> position = std::nullopt);
-
+    Lumie(sf::Vector2u window_size,
+          std::optional<sf::Vector2f> position = std::nullopt);
     void Draw(sf::RenderWindow& window) const;
     void MoveTo(sf::Vector2f position);
     sf::FloatRect GetBounds() const override;
     sf::Vector2f GetNextPosition(sf::Vector2u window_size);
 
    private:
-    sf::CircleShape body;
+    sf::ConvexShape body;
+    sf::ConvexShape glow;
     sf::Vector2u window_size;
     std::vector<sf::Vector2f> trail;
     void DrawTrail(sf::RenderWindow& window) const;
+    void DefineShape();
+    void SetPosition(std::optional<sf::Vector2f> position);
+    void SetGlow();
 
     // Use different starting values so both axes do not follow the same pattern.
     siv::PerlinNoise perlin;

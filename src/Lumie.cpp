@@ -1,4 +1,4 @@
-#include "Creature.hpp"
+#include "Lumie.hpp"
 #include "PerlinNoise.hpp"
 
 #include <iostream>
@@ -8,21 +8,59 @@
 static std::random_device rd;
 static std::mt19937 gen(rd());
 
-Creature::Creature(float radius, sf::Vector2u window_size,
-                   std::optional<sf::Vector2f> position)
-    : body(radius), window_size(window_size) {
-    body.setFillColor(GetRandomColor());
+Lumie::Lumie(sf::Vector2u window_size, std::optional<sf::Vector2f> position)
+    : window_size(window_size), body(16) {
+    DefineShape();
+    SetPosition(position);
+    SetGlow();
 
+    perlin.reseed(rd());
+}
+
+void Lumie::DefineShape() {
+    body.setPoint(0, {5.f, 0.f});
+    body.setPoint(1, {6.f, .5f});
+    body.setPoint(2, {6.f, 1.f});
+    body.setPoint(3, {7.f, 2.f});
+    body.setPoint(4, {7.f, 3.f});
+    body.setPoint(5, {6.f, 4.f});
+    body.setPoint(6, {6.f, 5.f});
+    body.setPoint(7, {6.f, 6.f});
+    body.setPoint(8, {5.f, 7.f});
+    body.setPoint(9, {4.f, 6.f});
+    body.setPoint(10, {4.f, 5.f});
+    body.setPoint(11, {4.f, 4.f});
+    body.setPoint(12, {3.f, 3.f});
+    body.setPoint(13, {3.f, 2.f});
+    body.setPoint(14, {4.f, 1.f});
+    body.setPoint(15, {4.f, .5f});
+
+    body.setFillColor(GetRandomColor());
+    body.setScale({2.f, 2.f});
+}
+
+void Lumie::SetGlow() {
+    glow = body;
+    glow.setScale({2.8f, 2.8f});
+    glow.setPosition(body.getPosition());
+    sf::Color glow_color = body.getFillColor();
+    glow_color.a = 100;
+    glow.setFillColor(glow_color);
+}
+
+void Lumie::SetPosition(std::optional<sf::Vector2f> position) {
     // Set the origin to the center of creature
     auto bounds = body.getLocalBounds();
     body.setOrigin({bounds.position.x + bounds.size.x / 2.f,
                     bounds.position.y + bounds.size.y / 2.f});
-    perlin.reseed(rd());
 
-    body.setPosition(position.value_or(GetRandomPosition(window_size)));
+    sf::Vector2f start_position =
+        position.value_or(GetRandomPosition(window_size));
+
+    body.setPosition(start_position);
 }
 
-sf::FloatRect Creature::GetBounds() const { return body.getGlobalBounds(); }
+sf::FloatRect Lumie::GetBounds() const { return body.getGlobalBounds(); }
 
 double MapNoise(double value, double input_min, double input_max,
                 double output_min, double output_max) {
@@ -30,7 +68,7 @@ double MapNoise(double value, double input_min, double input_max,
                             (input_max - input_min);
 }
 
-sf::Vector2f Creature::GetNextPosition(sf::Vector2u window_size) {
+sf::Vector2f Lumie::GetNextPosition(sf::Vector2u window_size) {
     const double x_noise = perlin.noise1D_01(noise_x);
     const double y_noise = perlin.noise1D_01(noise_y);
 
@@ -63,12 +101,13 @@ sf::Vector2f Creature::GetNextPosition(sf::Vector2u window_size) {
     return next_position;
 }
 
-void Creature::MoveTo(sf::Vector2f position) {
+void Lumie::MoveTo(sf::Vector2f position) {
     trail.push_back(body.getPosition());
     body.setPosition(position);
+    glow.setPosition(position);
 }
 
-void Creature::DrawTrail(sf::RenderWindow& window) const {
+void Lumie::DrawTrail(sf::RenderWindow& window) const {
     sf::Color trail_color = body.getFillColor();
     trail_color.a = 80;
 
@@ -81,8 +120,9 @@ void Creature::DrawTrail(sf::RenderWindow& window) const {
     }
 }
 
-void Creature::Draw(sf::RenderWindow& window) const {
+void Lumie::Draw(sf::RenderWindow& window) const {
     // DrawTrail(window);
+    window.draw(glow);
     window.draw(body);
 }
 
@@ -97,9 +137,20 @@ sf::Vector2f GetRandomPosition(sf::Vector2u window_size) {
 }
 
 sf::Color GetRandomColor() {
-    static std::uniform_int_distribution<int> color_dist(30, 230);
+    sf::Color colors[] = {
+        {210, 255, 60},   // yellow-green
+        {170, 255, 70},   // lime
+        {120, 255, 110},  // green
+        {80, 240, 180},   // aqua-green
+        {70, 210, 255},   // cyan-blue
+    };
+    // static std::uniform_int_distribution<int> color_dist(30, 230);
 
-    return {static_cast<std::uint8_t>(color_dist(gen)),
-            static_cast<std::uint8_t>(color_dist(gen)),
-            static_cast<std::uint8_t>(color_dist(gen))};
+    // return {static_cast<std::uint8_t>(color_dist(gen)),
+    //         static_cast<std::uint8_t>(color_dist(gen)),
+    //         static_cast<std::uint8_t>(color_dist(gen))};
+    std::uniform_int_distribution<int> dist(0, 4);
+
+    sf::Color color = colors[dist(gen)];
+    return color;
 }
