@@ -42,5 +42,5 @@ class Lumie : public WorldObject {
     double noise_x{0.0};
     double noise_y{10000.0};
 
-    const float move_speed = 10.0;
+    const float move_speed = 2.0;
 };

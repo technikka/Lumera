@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lumie.hpp"
+#include "Mover.hpp"
 #include "SpatialGrid.hpp"
 
 class World {
@@ -16,6 +17,7 @@ class World {
     sf::RenderWindow& window;
     SpatialGrid spatial_grid;
     std::vector<Lumie> lumies;
+    Mover mover;
 
     void InitializeLumies();
     void UpdateLumies();

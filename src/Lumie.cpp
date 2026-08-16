@@ -107,6 +107,7 @@ void Lumie::MoveTo(sf::Vector2f position) {
     sf::Vector2f current_position = body.getPosition();
     sf::Vector2f new_position = position;
     sf::Vector2f movement = new_position - current_position;
+
     auto angle = movement.angle();
 
     trail.push_back(current_position);
