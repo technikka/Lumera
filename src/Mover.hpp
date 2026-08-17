@@ -11,8 +11,7 @@ class Mover {
     void Move();
 
    private:
-    sf::Vector2f velocity = {0, -1};
-    // sf::Vector2f acceleration = {0.001, 0};
+    sf::Vector2f velocity = {0, 0};
     sf::Vector2f acceleration;
     sf::Vector2u window_size;
     sf::CircleShape body;

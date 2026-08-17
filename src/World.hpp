@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Deltaframe.hpp"
 #include "Lumie.hpp"
 #include "Mover.hpp"
 #include "SpatialGrid.hpp"
@@ -15,9 +16,11 @@ class World {
     bool paused = false;
     const int lumie_count = 20;
     sf::RenderWindow& window;
+    sf::Vector2u window_size = window.getSize();
     SpatialGrid spatial_grid;
     std::vector<Lumie> lumies;
     Mover mover;
+    Deltaframe deltaframe;
 
     void InitializeLumies();
     void UpdateLumies();

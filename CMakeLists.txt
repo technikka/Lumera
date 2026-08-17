@@ -18,6 +18,7 @@ add_executable(lumera
     src/SpatialGrid.cpp
     src/Lumie.cpp
     src/Mover.cpp
+    src/Deltaframe.cpp
 )
 
 target_include_directories(lumera PRIVATE

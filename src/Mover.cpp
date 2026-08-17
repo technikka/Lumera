@@ -17,15 +17,17 @@ void Mover::SetRandomAcceleration() {
     const double x_noise = perlin.noise1D(noise_x);
     const double y_noise = perlin.noise1D(noise_y);
 
-    acceleration = {static_cast<float>(x_noise * .1),
-                    static_cast<float>(y_noise * .1)};
+    const double acceleration_scale = 0.05;
+
+    acceleration = {static_cast<float>(x_noise * acceleration_scale),
+                    static_cast<float>(y_noise * acceleration_scale)};
 
     noise_x += 0.1;
     noise_y += 0.1;
 }
 
 void Mover::DefineShape() {
-    body.setRadius(7.f);
+    body.setRadius(8.f);
 
     sf::FloatRect bounds = body.getLocalBounds();
     // Set the origin to the center of creature

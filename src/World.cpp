@@ -1,19 +1,23 @@
 #include <SFML/Graphics.hpp>
 
+#include "Deltaframe.hpp"
 #include "Mover.hpp"
 #include "PerlinNoise.hpp"
 #include "SpatialGrid.hpp"
 #include "World.hpp"
 
 World::World(sf::RenderWindow& window)
-    : window(window), spatial_grid(window), mover(window.getSize()) {
+    : window(window),
+      spatial_grid(window),
+      mover(window_size),
+      deltaframe(window_size) {
     InitializeLumies();
 }
 
 void World::InitializeLumies() {
     for (int i = 0; i < lumie_count; ++i) {
         // emplace_back creates the object as it adds to end of vector.
-        lumies.emplace_back(window.getSize());
+        lumies.emplace_back(window_size);
     }
 
     for (auto& lumie : lumies) {
@@ -22,8 +26,6 @@ void World::InitializeLumies() {
 }
 
 void World::UpdateLumies() {
-    sf::Vector2u window_size = window.getSize();
-
     constexpr int max_attempts = 10;
     bool can_move = false;
 
@@ -60,6 +62,7 @@ void World::Update() {
     if (!paused) {
         UpdateLumies();
         mover.Move();
+        deltaframe.Update();
     }
 }
 
@@ -68,6 +71,7 @@ void World::Draw() {
     for (const auto& lumie : lumies) {
         lumie.Draw(window);
     }
+    deltaframe.Draw(window);
 }
 
 void World::TogglePause() { paused = !paused; }
