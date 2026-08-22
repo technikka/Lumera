@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 
 SpatialGrid::SpatialGrid(const sf::RenderWindow& window) : window(window) {
     cell_size = 10.f;
@@ -29,6 +30,9 @@ sf::Vector2i SpatialGrid::GetCellPosition(sf::Vector2f pixel_position) const {
 
 SpatialGrid::Cell& SpatialGrid::GetCellByOccupant(const WorldObject& occupant) {
     sf::Vector2i cell_position = GetCellPosition(occupant.GetPosition());
+    std::cout << "cell_position: (" << cell_position.x << ", "
+              << cell_position.y << ") "
+              << "grid size: (" << columns << ", " << rows << ")\n";
     Cell& cell = cells[cell_position.y][cell_position.x];
     return cell;
 }
@@ -58,9 +62,6 @@ bool SpatialGrid::WouldCollide(const WorldObject& occupant,
     int cell_distance = static_cast<int>(std::ceil(min_distance / cell_size));
 
     const sf::Vector2i cell_position = GetCellPosition(position);
-
-    // proposed position's cell:
-    const Cell& cell = cells[cell_position.y][cell_position.x];
 
     for (int y = cell_position.y - cell_distance;
          y <= cell_position.y + cell_distance; ++y) {

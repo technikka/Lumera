@@ -1,6 +1,6 @@
 #include "Deltaframe.hpp"
 
-Deltaframe::Deltaframe(sf::Vector2u window_size) : window_size(window_size) {
+Deltaframe::Deltaframe(sf::Vector2u window_size) : MovingObject(window_size) {
     DefineShape();
     SetPosition();
 }
@@ -8,12 +8,7 @@ Deltaframe::Deltaframe(sf::Vector2u window_size) : window_size(window_size) {
 void Deltaframe::DefineShape() {
     body.setRadius(20);
     body.setPointCount(3);
-
-    sf::FloatRect bounds = body.getLocalBounds();
-    // Set the origin to the center of creature
-    body.setOrigin({bounds.position.x + bounds.size.x / 2.f,
-                    bounds.position.y + bounds.size.y / 2.f});
-
+    SetBodyOrigin(body);
     body.setFillColor(sf::Color::Transparent);
     body.setOutlineColor(sf::Color(95, 135, 175));
     body.setOutlineThickness(5.f);
@@ -47,25 +42,9 @@ void Deltaframe::Break() {
 }
 
 void Deltaframe::Move() {
-    const float width = static_cast<float>(window_size.x);
-    const float height = static_cast<float>(window_size.y);
-
     sf::Vector2f new_position = body.getPosition() + velocity;
 
-    // Check edges
-    if (new_position.x > width) {
-        new_position.x = 0;
-    } else if (new_position.x < 0.f) {
-        new_position.x = width;
-    }
-
-    if (new_position.y > height) {
-        new_position.y = 0;
-    } else if (new_position.y < 0.f) {
-        new_position.y = height;
-    }
-
-    body.setPosition(new_position);
+    body.setPosition(GetWrappedPosition(new_position));
 }
 
 void Deltaframe::Update() {
@@ -103,3 +82,7 @@ void Deltaframe::Update() {
 
     Move();
 }
+
+sf::FloatRect Deltaframe::GetBounds() const { return body.getGlobalBounds(); }
+
+sf::Vector2f Deltaframe::GetPosition() const { return body.getPosition(); }

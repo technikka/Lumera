@@ -2,18 +2,20 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "MovingObject.hpp"
 #include "PerlinNoise.hpp"
 
-class Mover {
+class Mover : public MovingObject {
    public:
     Mover(sf::Vector2u window_size);
+    sf::FloatRect GetBounds() const override;
+    sf::Vector2f GetPosition() const override;
     void Draw(sf::RenderWindow& window) const;
     void Move();
 
    private:
     sf::Vector2f velocity = {0, 0};
     sf::Vector2f acceleration;
-    sf::Vector2u window_size;
     sf::CircleShape body;
     void DefineShape();
     void SetPosition();

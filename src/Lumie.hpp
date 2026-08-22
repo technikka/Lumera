@@ -3,13 +3,13 @@
 #include <SFML/Graphics.hpp>
 #include <array>
 
+#include "MovingObject.hpp"
 #include "PerlinNoise.hpp"
-#include "WorldObject.hpp"
 
 sf::Vector2f GetRandomPosition(sf::Vector2u window_size);
 sf::Color GetRandomColor();
 
-class Lumie : public WorldObject {
+class Lumie : public MovingObject {
    public:
     Lumie(sf::Vector2u window_size,
           std::optional<sf::Vector2f> position = std::nullopt);
@@ -22,7 +22,6 @@ class Lumie : public WorldObject {
    private:
     sf::ConvexShape body;
     sf::ConvexShape glow;
-    sf::Vector2u window_size;
 
     std::array<sf::Color, 5> colors = {
         sf::Color{210, 255, 60},  sf::Color{170, 255, 70},

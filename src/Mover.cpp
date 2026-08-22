@@ -6,7 +6,7 @@
 static std::random_device rd;
 static std::mt19937 gen(rd());
 
-Mover::Mover(sf::Vector2u window_size) : window_size(window_size) {
+Mover::Mover(sf::Vector2u window_size) : MovingObject(window_size) {
     DefineShape();
     SetPosition();
 
@@ -28,12 +28,7 @@ void Mover::SetRandomAcceleration() {
 
 void Mover::DefineShape() {
     body.setRadius(8.f);
-
-    sf::FloatRect bounds = body.getLocalBounds();
-    // Set the origin to the center of creature
-    body.setOrigin({bounds.position.x + bounds.size.x / 2.f,
-                    bounds.position.y + bounds.size.y / 2.f});
-
+    SetBodyOrigin(body);
     body.setFillColor(sf::Color(44, 82, 62));
 }
 
@@ -46,25 +41,12 @@ void Mover::Move() {
     SetRandomAcceleration();
     velocity += acceleration;
 
-    const float width = static_cast<float>(window_size.x);
-    const float height = static_cast<float>(window_size.y);
-
     sf::Vector2f new_position = body.getPosition() + velocity;
-
-    // Check edges
-    if (new_position.x > width) {
-        new_position.x = 0;
-    } else if (new_position.x < 0.f) {
-        new_position.x = width;
-    }
-
-    if (new_position.y > height) {
-        new_position.y = 0;
-    } else if (new_position.y < 0.f) {
-        new_position.y = height;
-    }
-
-    body.setPosition(new_position);
+    body.setPosition(GetWrappedPosition(new_position));
 }
 
 void Mover::Draw(sf::RenderWindow& window) const { window.draw(body); }
+
+sf::FloatRect Mover::GetBounds() const { return body.getGlobalBounds(); }
+
+sf::Vector2f Mover::GetPosition() const { return body.getPosition(); }

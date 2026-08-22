@@ -9,7 +9,7 @@ static std::random_device rd;
 static std::mt19937 gen(rd());
 
 Lumie::Lumie(sf::Vector2u window_size, std::optional<sf::Vector2f> position)
-    : window_size(window_size), body(16) {
+    : MovingObject(window_size), body(16) {
     DefineShape();
     SetPosition(position);
     SetGlow();
@@ -35,10 +35,7 @@ void Lumie::DefineShape() {
     body.setPoint(14, {4.f, 1.f});
     body.setPoint(15, {4.f, .5f});
 
-    // Set the origin to the center of creature
-    auto bounds = body.getLocalBounds();
-    body.setOrigin({bounds.position.x + bounds.size.x / 2.f,
-                    bounds.position.y + bounds.size.y / 2.f});
+    SetBodyOrigin(body);
 
     body.setFillColor(GetRandomColor());
     body.setScale({2.f, 2.f});
@@ -80,22 +77,9 @@ sf::Vector2f Lumie::GetNextPosition(sf::Vector2u window_size) {
         static_cast<float>(
             MapNoise(y_noise, 0.0, 1.0, -move_speed, move_speed))};
 
-    sf::Vector2f next_position = body.getPosition() + movement;
-
-    const float width = static_cast<float>(window_size.x);
-    const float height = static_cast<float>(window_size.y);
-
-    if (next_position.x > width) {
-        next_position.x -= width;
-    } else if (next_position.x < 0.f) {
-        next_position.x += width;
-    }
-
-    if (next_position.y > height) {
-        next_position.y -= height;
-    } else if (next_position.y < 0.f) {
-        next_position.y += height;
-    }
+    // sf::Vector2f next_position = body.getPosition() + movement;
+    sf::Vector2f next_position =
+        GetWrappedPosition(body.getPosition() + movement);
 
     noise_x += 0.01;
     noise_y += 0.01;

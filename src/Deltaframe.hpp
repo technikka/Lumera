@@ -2,14 +2,17 @@
 
 #include <SFML/Graphics.hpp>
 
-class Deltaframe {
+#include "MovingObject.hpp"
+
+class Deltaframe : public MovingObject {
    public:
     Deltaframe(sf::Vector2u window_size);
+    sf::FloatRect GetBounds() const override;
+    sf::Vector2f GetPosition() const override;
     void Draw(sf::RenderWindow& window) const;
     void Update();
 
    private:
-    sf::Vector2u window_size;
     sf::CircleShape body;
     void DefineShape();
     void SetPosition();
