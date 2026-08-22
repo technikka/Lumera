@@ -18,7 +18,7 @@ add_executable(lumera
     src/SpatialGrid.cpp
     src/MovingObject.cpp
     src/Lumie.cpp
-    src/Mover.cpp
+    src/Seekra.cpp
     src/Deltaframe.cpp
 )
 

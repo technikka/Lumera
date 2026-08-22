@@ -2,7 +2,7 @@
 
 #include "Deltaframe.hpp"
 #include "Lumie.hpp"
-#include "Mover.hpp"
+#include "Seekra.hpp"
 #include "SpatialGrid.hpp"
 
 class World {
@@ -19,7 +19,7 @@ class World {
     sf::Vector2u window_size = window.getSize();
     SpatialGrid spatial_grid;
     std::vector<Lumie> lumies;
-    Mover mover;
+    Seekra seekra;
     Deltaframe deltaframe;
 
     void InitializeLumies();

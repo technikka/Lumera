@@ -1,15 +1,15 @@
 #include <SFML/Graphics.hpp>
 
 #include "Deltaframe.hpp"
-#include "Mover.hpp"
 #include "PerlinNoise.hpp"
+#include "Seekra.hpp"
 #include "SpatialGrid.hpp"
 #include "World.hpp"
 
 World::World(sf::RenderWindow& window)
     : window(window),
       spatial_grid(window),
-      mover(window_size),
+      seekra(window_size),
       deltaframe(window_size) {
     InitializeLumies();
 }
@@ -61,13 +61,13 @@ void World::UpdateLumies() {
 void World::Update() {
     if (!paused) {
         UpdateLumies();
-        mover.Move();
+        seekra.Move();
         deltaframe.Update();
     }
 }
 
 void World::Draw() {
-    mover.Draw(window);
+    seekra.Draw(window);
     for (const auto& lumie : lumies) {
         lumie.Draw(window);
     }

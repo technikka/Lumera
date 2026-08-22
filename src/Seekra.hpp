@@ -5,9 +5,9 @@
 #include "MovingObject.hpp"
 #include "PerlinNoise.hpp"
 
-class Mover : public MovingObject {
+class Seekra : public MovingObject {
    public:
-    Mover(sf::Vector2u window_size);
+    Seekra(sf::Vector2u window_size);
     sf::FloatRect GetBounds() const override;
     sf::Vector2f GetPosition() const override;
     void Draw(sf::RenderWindow& window) const;
@@ -16,7 +16,7 @@ class Mover : public MovingObject {
    private:
     sf::Vector2f velocity = {0, 0};
     sf::Vector2f acceleration;
-    sf::CircleShape body;
+    sf::ConvexShape body;
     void DefineShape();
     void SetPosition();
     void SetRandomAcceleration();
